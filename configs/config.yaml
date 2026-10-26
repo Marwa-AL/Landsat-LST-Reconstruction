@@ -1,0 +1,103 @@
+# -----------------------------------------------------------------------------
+# Training / evaluation / inference configuration
+#   python src/train.py     --config configs/config.yaml
+#   python src/evaluate.py  --config configs/config.yaml
+#   python src/inference.py --config configs/config.yaml
+# All relative paths are resolved from the directory you run the command in
+# (the repository root).
+# -----------------------------------------------------------------------------
+
+# --- Experiment Setup ---
+run_name: "run_full_stack_FFCGAN"              # TensorBoard run name (logs go to runs/<run_name>)
+output_dir: "outputs/full_multimodal"          # checkpoints + architecture dumps + preview plots
+resume_checkpoint: null                        # path to a .pth to resume training, or null
+random_seed: 42                                # used for the artificial-mask selection in evaluate.py
+num_workers: 4                                 # DataLoader workers (set 0 on Windows if you hit issues)
+
+# --- Data (produced by the preprocessing scripts / downloaded from Hugging Face) ---
+split_data_dir: "data/split_dataset_with_dem_resampledNdvi_hs_sar_vv_vh"  # contains train/tiles, val/tiles, test/tiles
+mask_dir: "data/mask_tiles"                    # PNG mask tiles used for random masking
+
+# Generator network:
+#   "ffc_lama"  - multi-modal LaMa generator with Fast Fourier Convolutions (the proposed FFC-GAN)
+#   "swin_unet" - SwinUNet-GAN: same GAN, FFC generator replaced by Swin-UNet
+#                 (needs: git submodule update --init; see configs/config_swin_unet.yaml)
+generator: "ffc_lama"
+
+# Input channels fed to the model (see README "Channel layout"). Must start with 0 (LST).
+#   Baseline (LST + LULC + DOY):                 [0..11]
+#   + Topography & vegetation:                    [0..16]
+#   Full multi-modal stack (+ hillshade, S1):     [0..19]
+active_data_indices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+# --- Paths for Evaluation / Inference ---
+checkpoint_path: "checkpoints/ffc_gan_generator.pth"   # see README "Pretrained models"
+mask_lookup_csv: "data/validation_metrics.csv"   # optional: re-use the exact artificial masks of a previous run
+landsat_dir_test: "data/test_data_landsat_193_26" # held-out scenes for evaluate.py
+landsat_dir: "data/landsat_scenes"               # scenes to gap-fill with inference.py
+lulc_dir: "data/LULC_Sentinel2_10m"
+dem_path: "data/DEM/output_hh.tif"
+slope_path: "data/aspect_and_slope/viz.hh_slope.tif"
+aspect_path: "data/aspect_and_slope/viz.hh_aspect.tif"
+ndvi_dir: "data/NDVI"
+hillshade_dir: "data/hillshades"
+sar_dir: "data/GEE_S1_Stitch_Exports"
+metadata_dir: "data/metadata"                    # Landsat *_MTL.txt files (cloud cover for mask selection)
+qa_files_dir: "data/LST_MaxCloud80"              # pool of QA_PIXEL files used as artificial masks
+
+output_dir_tiles: "outputs/validation_tiffs"     # evaluate.py
+output_dir_plots: "outputs/validation_plots"     # evaluate.py
+inference_output_tiles: "outputs/inpainted_scenes_tiffs"  # inference.py
+inference_output_plots: "outputs/inpainted_scenes_plots"  # inference.py
+
+# --- Training Hyperparameters ---
+scheduler_type: "plateau"   # "plateau" or "cosine_warmup"
+warmup_epochs: 5            # only used with "cosine_warmup"
+use_amp: False
+batch_size: 16
+num_epochs: 60
+save_checkpoint_every_n_epochs: 1
+learning_rate_g: 0.0002     # 2e-4
+learning_rate_d: 0.00005    # 5e-5
+
+reconstruction_loss_type: "standard_mae"  # "physical_mse", "hybrid_q4" or "standard_mae"
+
+# --- Loss Weights ---
+kappa: 10     # adversarial loss
+alpha: 30     # perceptual (VGG19) loss
+beta: 100     # discriminator feature-matching loss
+gamma: 0.001  # R1 gradient penalty
+lambda: 1.0   # reconstruction loss
+delta: 1.0    # gradient (texture) loss
+
+# NOTE: the discriminator is the fixed NLayerDiscriminator from the LaMa paper
+# (ndf=64, 5 conv blocks), hard-coded in src/train.py. The former
+# `discriminator: {n_layers, ndf}` block was not read by the code and was removed.
+
+# --- Data Normalization Bounds (must match configs/data_config.yaml) ---
+normalization:
+  lst:
+    min: 260.0
+    max: 342.0
+  elevation:
+    min: -500.0
+    max: 9000.0
+  slope:
+    max: 90.0
+  ndvi:            # Copernicus GLS NDVI 300 m: physical = DN * 0.004 - 0.08
+    scale_factor: 0.004
+    offset: -0.08
+  sar_vv:
+    min: -25.0
+    max: 5.0
+  sar_vh:
+    min: -30.0
+    max: -5.0
+
+# Validation tiles (file names inside <split_data_dir>/val/tiles) plotted after every epoch.
+# Missing files are skipped with a warning; leave empty to plot the first validation batch.
+preview_tiles:
+  - "scene_20190726_tile_3968_5760.tif"
+  - "scene_20130709_tile_3840_2048.tif"
+  - "scene_20130709_tile_3968_5760.tif"
+  - "scene_20220320_tile_3968_5760.tif"

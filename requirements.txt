@@ -1,0 +1,44 @@
+# Exact package versions of the environment the published model was trained in:
+# enroot/Docker container based on pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+# (Ubuntu 20.04, Python 3.10, PyTorch 2.1.0, CUDA 12.1, cuDNN 8.9).
+# Step-by-step installation: docs/SETUP.md
+#
+# Inside that container torch/torchvision are already installed and stay unchanged.
+# Without the container, install PyTorch first:
+#   pip install torch==2.1.0 torchvision==0.16.0 --index-url https://download.pytorch.org/whl/cu121
+
+# --- Deep learning (provided by the base image) ---
+torch==2.1.0
+torchvision==0.16.0
+
+# --- Numerics (numpy must stay < 2 for PyTorch 2.1) ---
+numpy==1.26.0
+scipy==1.15.3
+pandas==2.3.2
+scikit-learn==1.7.2
+
+# --- Geospatial ---
+rasterio==1.4.3
+shapely==2.1.1
+scikit-image==0.25.2
+
+# --- Training losses / metrics / logging ---
+torchmetrics==1.9.0
+torch-fidelity==0.4.0      # needed by torchmetrics' FrechetInceptionDistance
+lpips==0.1.4
+tensorboard==2.21.0
+
+# --- Plotting / IO / utilities ---
+matplotlib==3.10.6
+seaborn==0.13.2
+pillow==11.3.0
+pyyaml>=6.0
+tqdm>=4.65
+
+# --- SwinUNet-GAN only (generator: "swin_unet"; tested versions) ---
+timm==1.0.30
+einops==0.8.2
+ml-collections==1.1.0
+
+# --- Optional: only for src/downloading_sar_data.py (Google Earth Engine export) ---
+# earthengine-api

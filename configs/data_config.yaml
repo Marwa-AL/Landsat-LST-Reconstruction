@@ -1,0 +1,53 @@
+# -----------------------------------------------------------------------------
+# Preprocessing configuration (run from the repository root)
+#   python src/generate_hillshades.py        --config configs/data_config.yaml
+#   python src/mask_tile_generator.py        --config configs/data_config.yaml
+#   python src/generating_training_tiles.py  --config configs/data_config.yaml
+#   python src/split_dataset.py              --config configs/data_config.yaml
+# -----------------------------------------------------------------------------
+
+paths:
+  # Inputs
+  landsat_dir: "data/landsat_scenes"          # *_ST_B10.TIF + *_QA_PIXEL.TIF (Landsat 8/9 C2 L2)
+  metadata: "data/metadata"                   # *_MTL.txt (sun position + corners for hillshades)
+  lulc_dir: "data/LULC_Sentinel2_10m"         # Esri Sentinel-2 10 m LULC, e.g. 32U_20190101-20200101.tif
+  ndvi_dir: "data/NDVI"                       # Copernicus GLS NDVI300 GeoTIFFs (searched recursively)
+  hillshade_dir: "data/hillshades"            # written by generate_hillshades.py
+  sar_dir: "data/GEE_S1_Stitch_Exports"       # written by downloading_sar_data.py (via Google Drive)
+  dem_path: "data/DEM/output_hh.tif"
+  slope_path: "data/aspect_and_slope/viz.hh_slope.tif"
+  aspect_path: "data/aspect_and_slope/viz.hh_aspect.tif"
+
+  # Outputs
+  masks_out: "data/mask_tiles"
+  tiles_out: "data/training_tiles"
+  split_data_dir: "data/split_dataset_with_dem_resampledNdvi_hs_sar_vv_vh"  # must equal `split_data_dir` in configs/config.yaml
+  plots_out: "outputs/plots_normalized_stack"
+
+parameters:
+  target_crs_epsg: 32632
+  tile_size: 256
+  stride: 128
+  mask_min_percent: 10.0          # keep mask tiles with 10-80 % masked pixels
+  mask_max_percent: 80.0
+  supplemental_random_tiles: 60   # extra random clear-sky tiles per scene
+  random_seed: 42                 # random tiles + train/val/test split
+
+normalization:
+  lst:
+    min: 260.0
+    max: 342.0
+  elevation:
+    min: -500.0
+    max: 9000.0
+  slope:
+    max: 90.0
+  ndvi:            # Copernicus GLS NDVI 300 m: physical = DN * 0.004 - 0.08
+    scale_factor: 0.004
+    offset: -0.08
+  sar_vv:
+    min: -25.0
+    max: 5.0
+  sar_vh:
+    min: -30.0
+    max: -5.0

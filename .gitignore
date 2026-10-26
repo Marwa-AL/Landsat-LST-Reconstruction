@@ -1,0 +1,36 @@
+# Data and results are distributed via Hugging Face, not git
+data/
+outputs/
+outputs_*/
+runs/
+checkpoints/
+*.pth
+*.pt
+*.npz
+*.npy
+*.tif
+*.TIF
+*.zip
+*.tar.gz
+*.sqsh
+
+# Local, machine-specific files
+configs/*_local.yaml
+env/
+.cache/
+smoke_run*/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.spyproject/

@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software or dataset, please cite the paper below."
+title: "Landsat LST Reconstruction: Multimodal FFC-GAN and SwinUNet-GAN"
+authors:
+  - family-names: Alfouly
+    given-names: Marwa
+license: MIT
+repository-code: "https://github.com/Marwa-AL/Landsat-LST-Reconstruction"
+preferred-citation:
+  type: article
+  title: "Fast Fourier Convolutional GAN for 30 m Clear-Sky Land Surface Temperature Gap-Free Reconstruction"
+  authors:
+    - family-names: Alfouly
+      given-names: Marwa
+    - family-names: Halilovic
+      given-names: Smajil
+    - family-names: Bochow
+      given-names: Nils
+    - family-names: Hamacher
+      given-names: Thomas
+    - family-names: Boers
+      given-names: Niklas
+    - family-names: Schindler
+      given-names: Konrad
+  journal: "arXiv preprint arXiv:2607.22734"
+  year: 2026
+  doi: "10.48550/arXiv.2607.22734"
