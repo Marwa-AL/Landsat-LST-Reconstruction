@@ -32,7 +32,7 @@ generator: "swin_unet"
 active_data_indices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 
 # --- Paths for Evaluation / Inference ---
-checkpoint_path: "checkpoints/swin_unet_generator.pth"   # see README "Pretrained models"
+checkpoint_path: "checkpoints/best_model_swinunet.pth"   # see README "Pretrained models"
 mask_lookup_csv: "data/validation_metrics.csv"   # optional: re-use the exact artificial masks of a previous run
 landsat_dir_test: "data/test_data_landsat_193_26" # held-out scenes for evaluate.py
 landsat_dir: "data/landsat_scenes"               # scenes to gap-fill with inference.py

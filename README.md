@@ -168,18 +168,18 @@ full step-by-step guide.
 
 ## Pretrained models
 
-The trained generators are attached to the
-[GitHub release](https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases) of this repository:
+The trained models (full training checkpoints) are attached to the
+[v1.0 GitHub release](https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases/tag/v1.0) of this repository:
 
 | File | Model | Inputs |
 |---|---|---|
-| `ffc_gan_generator.pth` | Multimodal FFC-GAN | 20 channels + mask |
-| `swin_unet_generator.pth` | SwinUNet-GAN | 20 channels + mask |
+| `best_model_ffcgan.pth` | Multimodal FFC-GAN | 20 channels + mask |
+| `best_model_swinunet.pth` | SwinUNet-GAN | 20 channels + mask |
 
 ```bash
 mkdir -p checkpoints
-wget -P checkpoints https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases/download/v1.0/ffc_gan_generator.pth
-wget -P checkpoints https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases/download/v1.0/swin_unet_generator.pth
+wget -P checkpoints https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases/download/v1.0/best_model_ffcgan.pth
+wget -P checkpoints https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases/download/v1.0/best_model_swinunet.pth
 ```
 
 `configs/config.yaml` and `configs/config_swin_unet.yaml` already point to these files.
