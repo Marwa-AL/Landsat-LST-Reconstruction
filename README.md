@@ -192,10 +192,9 @@ python src/evaluate.py  --config configs/config.yaml
 # real cloud gaps -> georeferenced GeoTIFFs
 python src/inference.py --config configs/config.yaml
 ```
-Use `configs/config_swin_unet.yaml` for the SwinUNet-GAN. To reproduce the published metrics
-exactly, point `mask_lookup_csv` to the provided `validation_metrics.csv` so the same
-artificial masks are used; the file used for the paper is attached to the
-[v1.0 release](https://github.com/Marwa-AL/Landsat-LST-Reconstruction/releases).
+Use `configs/config_swin_unet.yaml` for the SwinUNet-GAN. The artificial cloud masks are
+chosen at random (seeded by `random_seed`); to compare runs on exactly the same masks, point
+`mask_lookup_csv` to the `validation_metrics.csv` written by a previous evaluation.
 
 ## Quick check without real data
 
